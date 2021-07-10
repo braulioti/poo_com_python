@@ -16,7 +16,7 @@ Estudos do Curso de programação Python de [Marcos Castro](https://www.udemy.co
 5. Design Patterns com Python
 6. Projeto SQLite
 7. Projeto Aplicação Web com Bottle
-8. Projeto Jogo Snake com tkinter
+8. ~~Projeto Jogo Snake com tkinter~~
 9. Projeto Aplicação Web com Flask
 
 ## Sobre Mim
