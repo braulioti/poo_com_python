@@ -79,3 +79,54 @@ class Board(Canvas):
         self.dot_y = r * DOT_SIZE
 
         self.create_image(self.dot_x, self.dot_y, image=self.body, anchor=NW, tag='dot')
+
+    def do_move(self):
+
+        bodys = self.find_withtag('body')
+        head = self.find_withtag('head')
+
+        items = bodys + head
+
+        k = 0
+        while(k < len(items) - 1):
+            c1 = self.coords(items[k])
+            c2 = self.coords(items[k+1])
+            self.move(items[k], c2[0]-c1[0], c2[1]-c1[1])
+            k += 1
+
+        if self.left:
+            self.move(head, -DOT_SIZE, 0)
+
+        if self.right:
+            self.move(head, DOT_SIZE, 0)
+
+        if self.up:
+            self.move(head, 0, -DOT_SIZE)
+
+        if self.down:
+            self.move(head, 0, DOT_SIZE)
+
+    def check_collisions(self):
+
+        bodys = self.find_withtag('body')
+        head = self.find_withtag('head')
+
+        x1, y1, x2, y2 = self.bbox(head)
+        overlap = self.find_overlapping(x1, y1, x2, y2)
+
+        for body in bodys:
+            for ovr in overlap:
+                if body == ovr:
+                    self.in_game = False
+
+        if (x1 < 0):
+            self.in_game = False
+
+        if (x1 < WIDTH - DOT_SIZE):
+            self.in_game = False
+
+        if (y1 < 0):
+            self.in_game = False
+
+        if (y1 < HEIGHT - DOT_SIZE):
+            self.in_game = False
