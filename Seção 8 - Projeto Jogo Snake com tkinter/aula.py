@@ -1,8 +1,7 @@
 import random
 import sys
-from tkinter import Canvas, Image, NW
-
-from PIL import ImageTk
+from PIL import Image, ImageTk
+from tkinter import Canvas, Frame, NW, ALL, Tk
 
 WIDTH = 300
 HEIGHT = 300
@@ -34,10 +33,10 @@ class Board(Canvas):
         try:
             self.ibody = Image.open('dot.png')
             self.body = ImageTk.PhotoImage(self.ibody)
-            self.ibody = Image.open('head.png')
-            self.head = ImageTk.PhotoImage(self.ibody)
+            self.ihead = Image.open('head.png')
+            self.head = ImageTk.PhotoImage(self.ihead)
             self.idot = Image.open('dot.png')
-            self.dot = ImageTk.PhotoImage(self.ibody)
+            self.dot = ImageTk.PhotoImage(self.idot)
         except IOError as e:
             print(str(e))
             sys.exit(1)
@@ -47,7 +46,7 @@ class Board(Canvas):
         self.bind_all('<Key>', self.on_key_press)
         self.after(DELAY, self.on_time)
 
-    def crete_objects(self):
+    def create_objects(self):
 
         self.create_image(self.dot_x, self.dot_y, image=self.dot, anchor=NW, tag='dot')
         self.create_image(50, 50, image=self.head, anchor=NW, tag='head')
@@ -130,3 +129,58 @@ class Board(Canvas):
 
         if (y1 < HEIGHT - DOT_SIZE):
             self.in_game = False
+
+    def on_key_press(self, e):
+
+        key = e.keysym
+
+        if (key == 'Left' and not self.right):
+            self.left = True
+            self.up = False
+            self.down = False
+
+        if (key == 'Right' and not self.left):
+            self.right = True
+            self.up = False
+            self.down = False
+
+        if (key == 'Up' and not self.down):
+            self.up = True
+            self.right = False
+            self.left = False
+
+        if (key == 'Down' and not self.up):
+            self.down = True
+            self.right = False
+            self.left = False
+
+    def on_time(self):
+
+        if self.in_game:
+            self.check_collisions()
+            self.check_dot()
+            self.do_move()
+            self.after(DELAY, self.on_time())
+
+        else:
+            self.game_over()
+
+    def game_over(self):
+        self.delete(ALL)
+        self.create_text(self.winfo_width()/2, self.winfo_height()/2, text='Game Over', fill='White')
+
+class Snake(Frame):
+
+    def __init__(self, parent):
+        super().__init__(parent)
+        parent.title('Snake')
+        self.board = Board(parent)
+        self.pack()
+
+def main():
+    root = Tk()
+    snake = Snake(root)
+    root.mainloop()
+
+if __name__ == '__main__':
+    main()
